@@ -1,0 +1,74 @@
+CREATE TABLE Musician (
+    MusicianID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Street VARCHAR(100),
+    City VARCHAR(50)
+);
+
+CREATE TABLE Album (
+    AlbumID INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(100) NOT NULL,
+    ReleaseDate DATE
+);
+
+CREATE TABLE Instrument (
+    InstrumentID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Performance (
+    MusicianID INT,
+    AlbumID INT,
+    InstrumentID INT,
+    Role VARCHAR(50),
+    PRIMARY KEY (MusicianID, AlbumID, InstrumentID),
+    FOREIGN KEY (MusicianID) REFERENCES Musician(MusicianID) ON DELETE CASCADE,
+    FOREIGN KEY (AlbumID) REFERENCES Album(AlbumID) ON DELETE CASCADE,
+    FOREIGN KEY (InstrumentID) REFERENCES Instrument(InstrumentID) ON DELETE CASCADE
+);
+
+INSERT INTO Musician (Name, Street, City) VALUES
+('Ali Ahmed', 'El Nasr St', 'Cairo'),
+('Sara Youssef', 'Tahrir St', 'Alexandria'),
+('Omar Khaled', 'Heliopolis', 'Cairo');
+
+INSERT INTO Album (Title, ReleaseDate) VALUES
+('Melodies of Life', '2023-01-15'),
+('Sunset Tunes', '2022-06-20'),
+('Rhythm of Cairo', '2021-11-05');
+
+INSERT INTO Instrument (Name) VALUES
+('Guitar'),
+('Piano'),
+('Drums'),
+('Violin');
+
+INSERT INTO Performance (MusicianID, AlbumID, InstrumentID, Role) VALUES
+(1, 1, 1, 'Lead Guitar'),
+(2, 1, 2, 'Piano'),
+(3, 2, 3, 'Drummer'),
+(1, 3, 4, 'Violin'),
+(2, 3, 2, 'Piano');
+
+SELECT * FROM Musician;
+SELECT * FROM Album;
+SELECT m.Name AS Musician, a.Title AS Album, i.Name AS Instrument, p.Role
+FROM Performance p
+JOIN Musician m ON p.MusicianID = m.MusicianID
+JOIN Album a ON p.AlbumID = a.AlbumID
+JOIN Instrument i ON p.InstrumentID = i.InstrumentID;
+SELECT m.Name AS Musician
+FROM Performance p
+JOIN Musician m ON p.MusicianID = m.MusicianID
+WHERE p.AlbumID = 1;
+SELECT DISTINCT m.Name AS Musician
+FROM Performance p
+JOIN Musician m ON p.MusicianID = m.MusicianID
+WHERE p.InstrumentID = 2;
+CREATE VIEW MusicianAlbumView AS
+SELECT m.Name AS Musician, a.Title AS Album, i.Name AS Instrument, p.Role
+FROM Performance p
+JOIN Musician m ON p.MusicianID = m.MusicianID
+JOIN Album a ON p.AlbumID = a.AlbumID
+JOIN Instrument i ON p.InstrumentID = i.InstrumentID;
+SELECT * FROM MusicianAlbumView;
